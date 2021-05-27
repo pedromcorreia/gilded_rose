@@ -57,6 +57,10 @@ defmodule GildedRose do
     increase_quality(item, 1)
   end
 
+  def update_item(%GildedRose.Item{name: "Sulfuras, Hand of Ragnaros"} = item) do
+    item
+  end
+
   def update_item(%GildedRose.Item{} = item) do
     increase_quality(item, 1)
   end
