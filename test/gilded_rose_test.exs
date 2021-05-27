@@ -120,11 +120,15 @@ defmodule GildedRoseTest do
       assert aged_brie.sell_in - aged_brie_updated.sell_in == 1
     end
 
-    @tag :skip
     test "Quality never more than 50" do
       gilded_rose = GildedRose.new()
       for _ <- 1..100, do: assert(:ok = GildedRose.update_quality(gilded_rose))
-      assert GildedRose.product(gilded_rose, "Aged Brie").quality == 50
+
+      assert GildedRose.product(gilded_rose, "Aged Brie") == %GildedRose.Item{
+               name: "Aged Brie",
+               quality: 50,
+               sell_in: -98
+             }
     end
 
     test "Sultufas sell_in always is always 0" do
