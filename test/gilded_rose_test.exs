@@ -2,6 +2,7 @@ defmodule GildedRoseTest do
   use ExUnit.Case
   doctest GildedRose
 
+  @tag :skip
   test "interface specification" do
     gilded_rose = GildedRose.new()
     [%GildedRose.Item{} | _] = GildedRose.items(gilded_rose)
@@ -15,6 +16,7 @@ defmodule GildedRoseTest do
   end
 
   describe "items/1" do
+    @tag :skip
     test "receive a process and respond with list items" do
       gilded_rose = GildedRose.new()
 
@@ -35,6 +37,7 @@ defmodule GildedRoseTest do
   end
 
   describe "update_quality/1" do
+    @tag :skip
     test "receive a process and respond with updated list items" do
       gilded_rose = GildedRose.new()
       assert :ok = GildedRose.update_quality(gilded_rose)
@@ -54,6 +57,7 @@ defmodule GildedRoseTest do
                ]
     end
 
+    @tag :skip
     test "receive a process and respond with updated list items after 100 days" do
       gilded_rose = GildedRose.new()
 
@@ -74,6 +78,7 @@ defmodule GildedRoseTest do
                ]
     end
 
+    @tag :skip
     test "if the sell_in days is less than zero, degrades twice fast" do
       gilded_rose = GildedRose.new()
 
@@ -85,12 +90,14 @@ defmodule GildedRoseTest do
       for _ <- 1..5 do
         dexterity = GildedRose.product(gilded_rose, "+5 Dexterity Vest")
         GildedRose.update_quality(gilded_rose)
+        dexterity_updated = GildedRose.product(gilded_rose, "+5 Dexterity Vest")
 
-        assert -2 =
-                 GildedRose.product(gilded_rose, "+5 Dexterity Vest").quality - dexterity.quality
+        assert -2 = dexterity_updated.quality - dexterity.quality
+        assert -1 = dexterity_updated.sell_in - dexterity.sell_in
       end
     end
 
+    @tag :skip
     test "quality is never negative" do
       gilded_rose = GildedRose.new()
 
@@ -101,6 +108,7 @@ defmodule GildedRoseTest do
       end)
     end
 
+    @tag :skip
     test "Aged Brie must increase quality when gets old" do
       gilded_rose = GildedRose.new()
 
@@ -112,12 +120,14 @@ defmodule GildedRoseTest do
       assert aged_brie.sell_in - aged_brie_updated.sell_in == 1
     end
 
+    @tag :skip
     test "Quality never more than 50" do
       gilded_rose = GildedRose.new()
       for _ <- 1..100, do: assert(:ok = GildedRose.update_quality(gilded_rose))
       assert GildedRose.product(gilded_rose, "Aged Brie").quality == 50
     end
 
+    @tag :skip
     test "Sultufas sell_in always is always 0" do
       gilded_rose = GildedRose.new()
       for _ <- 1..100, do: assert(:ok = GildedRose.update_quality(gilded_rose))
@@ -125,6 +135,7 @@ defmodule GildedRoseTest do
       assert GildedRose.product(gilded_rose, "Sulfuras, Hand of Ragnaros").sell_in == 0
     end
 
+    @tag :skip
     test "Sultufas quality is always 80" do
       gilded_rose = GildedRose.new()
       for _ <- 1..100, do: assert(:ok = GildedRose.update_quality(gilded_rose))
