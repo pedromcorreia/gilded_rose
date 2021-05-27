@@ -25,6 +25,55 @@ defmodule GildedRose do
   def update_quality(agent) do
     for i <- 0..(Agent.get(agent, &length/1) - 1) do
       item = Agent.get(agent, &Enum.at(&1, i))
+      item = update_item(item)
+
+      Agent.update(agent, &List.replace_at(&1, i, item))
+    end
+
+    :ok
+  end
+
+  def update_item(
+        %GildedRose.Item{
+          name: "Backstage passes to a TAFKAL80ETC concert",
+          sell_in: sell_in
+        } = item
+      )
+      when sell_in <= 5 do
+    increase_quality(item, +3)
+  end
+
+  def update_item(
+        %GildedRose.Item{
+          name: "Backstage passes to a TAFKAL80ETC concert",
+          sell_in: sell_in
+        } = item
+      )
+      when sell_in <= 10 do
+    increase_quality(item, +2)
+  end
+
+  def update_item(
+        %GildedRose.Item{
+          name: "Backstage passes to a TAFKAL80ETC concert",
+          sell_in: sell_in
+        } = item
+      ) do
+    increase_quality(item, +1)
+  end
+
+  def update_item(%GildedRose.Item{} = item) do
+    item
+  end
+
+  def increase_quality(%GildedRose.Item{quality: quality, sell_in: sell_in} = item, amount) do
+    %{item | quality: quality + amount, sell_in: sell_in - 1}
+  end
+
+  # keep while refactoring
+  def update_quality(agent) do
+    for i <- 0..(Agent.get(agent, &length/1) - 1) do
+      item = Agent.get(agent, &Enum.at(&1, i))
 
       item =
         cond do
