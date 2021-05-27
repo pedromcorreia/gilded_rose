@@ -104,9 +104,12 @@ defmodule GildedRoseTest do
     test "Aged Brie must increase quality when gets old" do
       gilded_rose = GildedRose.new()
 
-      assert GildedRose.product(gilded_rose, "Aged Brie").quality == 0
+      aged_brie = GildedRose.product(gilded_rose, "Aged Brie")
+      assert aged_brie.quality == 0
       assert :ok = GildedRose.update_quality(gilded_rose)
-      assert GildedRose.product(gilded_rose, "Aged Brie").quality == 1
+      aged_brie_updated = GildedRose.product(gilded_rose, "Aged Brie")
+      assert aged_brie_updated.quality == 1
+      assert aged_brie.sell_in - aged_brie_updated.sell_in == 1
     end
 
     test "Quality never more than 50" do

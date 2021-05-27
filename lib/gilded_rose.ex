@@ -33,6 +33,14 @@ defmodule GildedRose do
     :ok
   end
 
+  def update_item(%GildedRose.Item{name: "Aged Brie"} = item) do
+    increase_quality(item, 1)
+  end
+
+  def update_item(%GildedRose.Item{name: "Sulfuras, Hand of Ragnaros"} = item) do
+    item
+  end
+
   def update_item(
         %GildedRose.Item{
           name: "Backstage passes to a TAFKAL80ETC concert",
@@ -40,7 +48,7 @@ defmodule GildedRose do
         } = item
       )
       when sell_in <= 5 do
-    increase_quality(item, +3)
+    increase_quality(item, 3)
   end
 
   def update_item(
@@ -50,20 +58,19 @@ defmodule GildedRose do
         } = item
       )
       when sell_in <= 10 do
-    increase_quality(item, +2)
+    increase_quality(item, 2)
   end
 
   def update_item(
         %GildedRose.Item{
-          name: "Backstage passes to a TAFKAL80ETC concert",
-          sell_in: sell_in
+          name: "Backstage passes to a TAFKAL80ETC concert"
         } = item
       ) do
-    increase_quality(item, +1)
+    increase_quality(item, 1)
   end
 
-  def update_item(%GildedRose.Item{} = item) do
-    item
+  def update_item(%GildedRose.Item{sell_in: sell_in} = item) do
+    %{item | sell_in: sell_in - 1}
   end
 
   def increase_quality(%GildedRose.Item{quality: quality, sell_in: sell_in} = item, amount) do
