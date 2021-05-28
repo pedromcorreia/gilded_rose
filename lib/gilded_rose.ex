@@ -66,8 +66,16 @@ defmodule GildedRose do
     %{item | sell_in: sell_in - 1}
   end
 
-  def update_item(%GildedRose.Item{} = item) do
+  def update_item(%GildedRose.Item{name: "Aged Brie"} = item) do
     increase_quality(item, 1)
+  end
+
+  def update_item(%GildedRose.Item{quality: 0, sell_in: sell_in} = item) do
+    %{item | sell_in: sell_in - 1}
+  end
+
+  def update_item(%GildedRose.Item{} = item) do
+    increase_quality(item, -1)
   end
 
   def increase_quality(%GildedRose.Item{quality: quality, sell_in: sell_in} = item, amount) do

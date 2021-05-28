@@ -97,7 +97,6 @@ defmodule GildedRoseTest do
       end
     end
 
-    @tag :skip
     test "quality is never negative" do
       gilded_rose = GildedRose.new()
 
@@ -108,7 +107,6 @@ defmodule GildedRoseTest do
       end)
     end
 
-    @tag :skip
     test "Aged Brie must increase quality when gets old" do
       gilded_rose = GildedRose.new()
 
