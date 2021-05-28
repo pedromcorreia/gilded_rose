@@ -78,7 +78,6 @@ defmodule GildedRoseTest do
                ]
     end
 
-    @tag :skip
     test "if the sell_in days is less than zero, degrades twice fast" do
       gilded_rose = GildedRose.new()
 

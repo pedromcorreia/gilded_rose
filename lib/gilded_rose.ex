@@ -70,8 +70,13 @@ defmodule GildedRose do
     increase_quality(item, 1)
   end
 
-  def update_item(%GildedRose.Item{quality: 0, sell_in: sell_in} = item) do
+  def update_item(%GildedRose.Item{quality: quality, sell_in: sell_in} = item)
+      when quality <= 1 do
     %{item | sell_in: sell_in - 1}
+  end
+
+  def update_item(%GildedRose.Item{sell_in: sell_in} = item) when sell_in <= 0 do
+    increase_quality(item, -2)
   end
 
   def update_item(%GildedRose.Item{} = item) do
