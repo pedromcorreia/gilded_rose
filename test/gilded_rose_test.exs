@@ -2,7 +2,6 @@ defmodule GildedRoseTest do
   use ExUnit.Case
   doctest GildedRose
 
-  @tag :skip
   test "interface specification" do
     gilded_rose = GildedRose.new()
     [%GildedRose.Item{} | _] = GildedRose.items(gilded_rose)
@@ -16,7 +15,6 @@ defmodule GildedRoseTest do
   end
 
   describe "items/1" do
-    @tag :skip
     test "receive a process and respond with list items" do
       gilded_rose = GildedRose.new()
 
@@ -37,7 +35,6 @@ defmodule GildedRoseTest do
   end
 
   describe "update_quality/1" do
-    @tag :skip
     test "receive a process and respond with updated list items" do
       gilded_rose = GildedRose.new()
       assert :ok = GildedRose.update_quality(gilded_rose)
@@ -57,7 +54,6 @@ defmodule GildedRoseTest do
                ]
     end
 
-    @tag :skip
     test "receive a process and respond with updated list items after 100 days" do
       gilded_rose = GildedRose.new()
 
