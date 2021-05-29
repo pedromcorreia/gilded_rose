@@ -8,7 +8,7 @@ defmodule GildedRoseTest do
     assert :ok == GildedRose.update_quality(gilded_rose)
   end
 
-  describe "regression test" do
+  describe "update_item/1" do
     test "ensure that after 1000 days both functions return same value" do
       gilded_rose = GildedRose.new()
 
@@ -32,42 +32,15 @@ defmodule GildedRoseTest do
     end
   end
 
-  describe "update_quality/1 to validate after some days" do
-    test "receive a process and respond with updated list items" do
-      gilded_rose = GildedRose.new()
-      assert :ok = GildedRose.update_quality(gilded_rose)
-
-      assert GildedRose.items(gilded_rose) == Helper.find_item_by_day(1)
-    end
-  end
-
   describe "update_quality/1 for generic items" do
     test "if the sell_in days is less than zero, degrades twice fast" do
-      gilded_rose = GildedRose.new()
-
-      for _ <- 1..10, do: GildedRose.update_quality(gilded_rose)
-
-      assert %GildedRose.Item{name: "+5 Dexterity Vest", quality: 10, sell_in: 0} ==
-               GildedRose.product(gilded_rose, "+5 Dexterity Vest")
-
-      for _ <- 1..5 do
-        dexterity = GildedRose.product(gilded_rose, "+5 Dexterity Vest")
-        GildedRose.update_quality(gilded_rose)
-        dexterity_updated = GildedRose.product(gilded_rose, "+5 Dexterity Vest")
-
-        assert -2 = dexterity_updated.quality - dexterity.quality
-        assert -1 = dexterity_updated.sell_in - dexterity.sell_in
-      end
+      dexterity = %GildedRose.Item{name: "+5 Dexterity Vest", quality: 20, sell_in: -10}
+      assert GildedRose.update_item(dexterity).quality == 18
     end
 
     test "quality is never negative" do
-      gilded_rose = GildedRose.new()
-
-      for _ <- 1..100, do: assert(:ok = GildedRose.update_quality(gilded_rose))
-
-      Enum.each(GildedRose.items(gilded_rose), fn item ->
-        assert item.quality >= 0
-      end)
+      dexterity = %GildedRose.Item{name: "+5 Dexterity Vest", quality: 0, sell_in: -10}
+      assert GildedRose.update_item(dexterity).quality == 0
     end
   end
 
@@ -108,11 +81,7 @@ defmodule GildedRoseTest do
         sell_in: 11
       }
 
-      assert GildedRose.update_item(backstage) == %GildedRose.Item{
-               name: "Backstage passes to a TAFKAL80ETC concert",
-               quality: 21,
-               sell_in: 10
-             }
+      assert GildedRose.update_item(backstage).quality == 21
     end
 
     test "Backstage passes to a TAFKAL80ETC concert when sell_in is beteween 10 and 6, increase quality in 2" do
@@ -122,11 +91,7 @@ defmodule GildedRoseTest do
         sell_in: 6
       }
 
-      assert GildedRose.update_item(backstage) == %GildedRose.Item{
-               name: "Backstage passes to a TAFKAL80ETC concert",
-               quality: 22,
-               sell_in: 5
-             }
+      assert GildedRose.update_item(backstage).quality == 22
     end
 
     test "Backstage passes to a TAFKAL80ETC concert when there is less than 5 days increase quality in 3" do
@@ -136,11 +101,7 @@ defmodule GildedRoseTest do
         sell_in: 2
       }
 
-      assert GildedRose.update_item(backstage) == %GildedRose.Item{
-               name: "Backstage passes to a TAFKAL80ETC concert",
-               quality: 23,
-               sell_in: 1
-             }
+      assert GildedRose.update_item(backstage).quality == 23
     end
   end
 
