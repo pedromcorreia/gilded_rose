@@ -49,10 +49,6 @@ defmodule GildedRose do
     %{item | quality: 80}
   end
 
-  def update_item(%Item{quality: quality} = item) when quality >= 50 do
-    item |> decrease_sell_in
-  end
-
   def update_item(%Item{name: @aged_brie, sell_in: sell_in} = item) when sell_in > 0 do
     item |> increase_quality(1) |> decrease_sell_in
   end
@@ -79,7 +75,8 @@ defmodule GildedRose do
   end
 
   defp increase_quality(%Item{quality: quality} = item, amount) do
-    %{item | quality: quality + amount}
+    quality = min(quality + amount, 50)
+    %{item | quality: quality}
   end
 
   defp decrease_sell_in(%Item{sell_in: sell_in} = item) do
