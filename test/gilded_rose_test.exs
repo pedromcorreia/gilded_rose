@@ -2,23 +2,6 @@ defmodule GildedRoseTest do
   use ExUnit.Case
   doctest GildedRose
 
-  test "interface specification" do
-    gilded_rose = GildedRose.new()
-    [%GildedRose.Item{} | _] = GildedRose.items(gilded_rose)
-    assert :ok == GildedRose.update_quality(gilded_rose)
-  end
-
-  describe "update_item/1" do
-    test "ensure that after 1000 days both functions return same value" do
-      gilded_rose = GildedRose.new()
-
-      for day <- 1..1000 do
-        GildedRose.update_quality(gilded_rose)
-        assert GildedRose.items(gilded_rose) == Helper.find_item_by_day(day)
-      end
-    end
-  end
-
   describe "new/0" do
     test "init a process id" do
       assert is_pid(GildedRose.new())
@@ -28,7 +11,24 @@ defmodule GildedRoseTest do
   describe "items/1" do
     test "receive a process and respond with list items" do
       gilded_rose = GildedRose.new()
-      assert GildedRose.items(gilded_rose) == Helper.find_item_by_day(0)
+      assert GildedRose.items(gilded_rose) == find_item_by_day(0)
+    end
+  end
+
+  describe "update_item/1" do
+    test "interface specification" do
+      gilded_rose = GildedRose.new()
+      [%GildedRose.Item{} | _] = GildedRose.items(gilded_rose)
+      assert :ok == GildedRose.update_quality(gilded_rose)
+    end
+
+    test "ensure that after 1000 days both functions return same value" do
+      gilded_rose = GildedRose.new()
+
+      for day <- 1..1000 do
+        GildedRose.update_quality(gilded_rose)
+        assert GildedRose.items(gilded_rose) == find_item_by_day(day)
+      end
     end
   end
 
@@ -106,6 +106,12 @@ defmodule GildedRoseTest do
   end
 
   describe "update_quality/1 for Conjured" do
+    test "never degrade less than 0" do
+      conjured = %GildedRose.Item{name: "Conjured Mana Cake", quality: 0, sell_in: -3}
+
+      assert GildedRose.update_item(conjured).quality == 0
+    end
+
     @tag :skip
     test "Conjured Mana Cake degrade twice fast than normal items" do
       gilded_rose = GildedRose.new()
@@ -120,5 +126,22 @@ defmodule GildedRoseTest do
       assert conjured_updated.quality == 4
       assert conjured.quality - conjured_updated.quality == 2
     end
+  end
+
+  defp find_item_by_day(day) when day <= 1000 and day >= 0 do
+    File.read!("test/mock/gilded_rose_data.json")
+    |> Poison.decode!()
+    |> Enum.find(fn x -> x["day"] == day end)
+    |> Map.get("product")
+    |> string_key_to_atom_map
+  end
+
+  defp string_key_to_atom_map(list_string_map) do
+    Enum.map(list_string_map, fn string_map ->
+      struct(
+        GildedRose.Item,
+        for({key, val} <- string_map, into: %{}, do: {String.to_atom(key), val})
+      )
+    end)
   end
 end

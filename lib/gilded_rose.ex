@@ -27,8 +27,6 @@ defmodule GildedRose do
 
   def items(agent), do: Agent.get(agent, & &1)
 
-  def product(agent, arg), do: Enum.find(items(agent), &(&1.name == arg))
-
   def update_item(%Item{name: @backstage, sell_in: sell_in} = item) when sell_in <= 0 do
     %{item | quality: 0} |> decrease_sell_in
   end
