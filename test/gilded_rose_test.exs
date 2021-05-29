@@ -8,17 +8,10 @@ defmodule GildedRoseTest do
     end
   end
 
-  describe "items/1" do
-    test "receive a process and respond with list items" do
-      gilded_rose = GildedRose.new()
-      assert GildedRose.items(gilded_rose) == find_item_by_day(0)
-    end
-  end
-
   describe "update_item/1" do
     test "interface specification" do
       gilded_rose = GildedRose.new()
-      [%GildedRose.Item{} | _] = GildedRose.items(gilded_rose)
+      [%GildedRose.Item{} | _] = Agent.get(gilded_rose, & &1)
       assert :ok == GildedRose.update_quality(gilded_rose)
     end
 
@@ -27,7 +20,7 @@ defmodule GildedRoseTest do
 
       for day <- 1..1000 do
         GildedRose.update_quality(gilded_rose)
-        assert GildedRose.items(gilded_rose) == find_item_by_day(day)
+        assert Agent.get(gilded_rose, & &1) == find_item_by_day(day)
       end
     end
   end
