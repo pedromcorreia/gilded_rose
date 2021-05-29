@@ -29,6 +29,11 @@ defmodule GildedRose do
 
   def product(agent, arg), do: Enum.find(items(agent), &(&1.name == arg))
 
+  def update_item(%GildedRose.Item{name: @backstage, sell_in: sell_in} = item)
+      when sell_in <= 0 do
+    %{item | quality: 0} |> decrease_sell_in
+  end
+
   def update_item(
         %GildedRose.Item{
           name: @backstage,
@@ -50,21 +55,8 @@ defmodule GildedRose do
   end
 
   def update_item(%GildedRose.Item{name: @backstage, sell_in: sell_in} = item)
-      when sell_in <= 0 do
-    %{item | quality: 0} |> decrease_sell_in
-  end
-
-  def update_item(%GildedRose.Item{name: @backstage, sell_in: sell_in} = item)
       when sell_in > 0 do
     item |> increase_quality(1) |> decrease_sell_in
-  end
-
-  def update_item(%GildedRose.Item{name: @backstage, quality: 0} = item) do
-    item |> decrease_sell_in
-  end
-
-  def update_item(%GildedRose.Item{name: @backstage} = item) do
-    item |> increase_quality(-1) |> decrease_sell_in
   end
 
   def update_item(%GildedRose.Item{name: @sulfuras} = item) do
