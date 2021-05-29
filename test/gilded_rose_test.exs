@@ -8,6 +8,19 @@ defmodule GildedRoseTest do
     assert :ok == GildedRose.update_quality(gilded_rose)
   end
 
+  describe "regression test" do
+    test "ensure that after 1000 days both functions return same value" do
+      gilded_rose = GildedRose.new()
+      gilded_rose_leeroy = GildedRose.new()
+
+      for day <- 1..1000 do
+        GildedRose.update_quality(gilded_rose)
+        GildedRose.update_quality(gilded_rose_leeroy, :leeroy)
+        assert GildedRose.items(gilded_rose) == GildedRose.items(gilded_rose_leeroy)
+      end
+    end
+  end
+
   describe "new/0" do
     test "init a process id" do
       assert is_pid(GildedRose.new())

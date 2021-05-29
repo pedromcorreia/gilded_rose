@@ -46,7 +46,7 @@ defmodule GildedRose do
         %GildedRose.Item{name: "Backstage passes to a TAFKAL80ETC concert", sell_in: sell_in} =
           item
       )
-      when sell_in < 0 do
+      when sell_in <= 0 do
     %{item | sell_in: sell_in - 1, quality: 0}
   end
 
@@ -100,6 +100,11 @@ defmodule GildedRose do
     increase_quality(item, -2)
   end
 
+  def update_item(%GildedRose.Item{sell_in: sell_in, name: name} = item)
+      when sell_in == 0 and name == "Conjured Mana Cake" do
+    increase_quality(item, -2)
+  end
+
   def update_item(%GildedRose.Item{} = item) do
     increase_quality(item, -1)
   end
@@ -120,7 +125,7 @@ defmodule GildedRose do
   end
 
   # keep while refactoring
-  def update_quality(agent) do
+  def update_quality(agent, :leeroy) do
     for i <- 0..(Agent.get(agent, &length/1) - 1) do
       item = Agent.get(agent, &Enum.at(&1, i))
 
