@@ -54,26 +54,6 @@ defmodule GildedRoseTest do
                ]
     end
 
-    test "receive a process and respond with updated list items after 100 days" do
-      gilded_rose = GildedRose.new()
-
-      for _ <- 1..100, do: assert(:ok = GildedRose.update_quality(gilded_rose))
-
-      assert GildedRose.items(gilded_rose) ==
-               [
-                 %GildedRose.Item{name: "+5 Dexterity Vest", quality: 0, sell_in: -90},
-                 %GildedRose.Item{name: "Aged Brie", quality: 50, sell_in: -98},
-                 %GildedRose.Item{name: "Elixir of the Mongoose", quality: 0, sell_in: -95},
-                 %GildedRose.Item{name: "Sulfuras, Hand of Ragnaros", quality: 80, sell_in: 0},
-                 %GildedRose.Item{
-                   name: "Backstage passes to a TAFKAL80ETC concert",
-                   quality: 0,
-                   sell_in: -85
-                 },
-                 %GildedRose.Item{name: "Conjured Mana Cake", quality: 0, sell_in: -97}
-               ]
-    end
-
     test "receive a process and respond with updated list items after 10 days" do
       gilded_rose = GildedRose.new()
 
@@ -91,6 +71,46 @@ defmodule GildedRoseTest do
                    sell_in: 5
                  },
                  %GildedRose.Item{name: "Conjured Mana Cake", quality: 0, sell_in: -7}
+               ]
+    end
+
+    test "receive a process and respond with updated list items after 50 days" do
+      gilded_rose = GildedRose.new()
+
+      for _ <- 1..50, do: GildedRose.update_quality(gilded_rose)
+
+      assert GildedRose.items(gilded_rose) ==
+               [
+                 %GildedRose.Item{name: "+5 Dexterity Vest", quality: 0, sell_in: -40},
+                 %GildedRose.Item{name: "Aged Brie", quality: 50, sell_in: -48},
+                 %GildedRose.Item{name: "Elixir of the Mongoose", quality: 0, sell_in: -45},
+                 %GildedRose.Item{name: "Sulfuras, Hand of Ragnaros", quality: 80, sell_in: 0},
+                 %GildedRose.Item{
+                   name: "Backstage passes to a TAFKAL80ETC concert",
+                   quality: 0,
+                   sell_in: -35
+                 },
+                 %GildedRose.Item{name: "Conjured Mana Cake", quality: 0, sell_in: -47}
+               ]
+    end
+
+    test "receive a process and respond with updated list items after 100 days" do
+      gilded_rose = GildedRose.new()
+
+      for _ <- 1..100, do: assert(:ok = GildedRose.update_quality(gilded_rose))
+
+      assert GildedRose.items(gilded_rose) ==
+               [
+                 %GildedRose.Item{name: "+5 Dexterity Vest", quality: 0, sell_in: -90},
+                 %GildedRose.Item{name: "Aged Brie", quality: 50, sell_in: -98},
+                 %GildedRose.Item{name: "Elixir of the Mongoose", quality: 0, sell_in: -95},
+                 %GildedRose.Item{name: "Sulfuras, Hand of Ragnaros", quality: 80, sell_in: 0},
+                 %GildedRose.Item{
+                   name: "Backstage passes to a TAFKAL80ETC concert",
+                   quality: 0,
+                   sell_in: -85
+                 },
+                 %GildedRose.Item{name: "Conjured Mana Cake", quality: 0, sell_in: -97}
                ]
     end
 

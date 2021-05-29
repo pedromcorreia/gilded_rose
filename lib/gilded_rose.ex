@@ -46,6 +46,14 @@ defmodule GildedRose do
         %GildedRose.Item{name: "Backstage passes to a TAFKAL80ETC concert", sell_in: sell_in} =
           item
       )
+      when sell_in < 0 do
+    %{item | sell_in: sell_in - 1, quality: 0}
+  end
+
+  def update_item(
+        %GildedRose.Item{name: "Backstage passes to a TAFKAL80ETC concert", sell_in: sell_in} =
+          item
+      )
       when sell_in > 0 do
     increase_quality(item, 1)
   end
