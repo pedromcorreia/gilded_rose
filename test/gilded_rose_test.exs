@@ -11,7 +11,6 @@ defmodule GildedRoseTest do
   describe "regression test" do
     test "ensure that after 1000 days both functions return same value" do
       gilded_rose = GildedRose.new()
-      gilded_rose_leeroy = GildedRose.new()
 
       for day <- 1..1000 do
         GildedRose.update_quality(gilded_rose)
@@ -70,112 +69,78 @@ defmodule GildedRoseTest do
         assert item.quality >= 0
       end)
     end
+  end
 
-    test "Aged Brie must increase quality when gets old" do
-      gilded_rose = GildedRose.new()
-
-      aged_brie = GildedRose.product(gilded_rose, "Aged Brie")
-      assert aged_brie.quality == 0
-      assert :ok = GildedRose.update_quality(gilded_rose)
-      aged_brie_updated = GildedRose.product(gilded_rose, "Aged Brie")
-      assert aged_brie_updated.quality == 1
-      assert aged_brie.sell_in - aged_brie_updated.sell_in == 1
+  describe "update_quality/1 for Aged Brie" do
+    test "must increase quality when gets old" do
+      aged_brie = %GildedRose.Item{name: "Aged Brie", quality: 0, sell_in: 2}
+      assert GildedRose.update_item(aged_brie).quality == 1
     end
 
-    test "Quality never more than 50" do
-      gilded_rose = GildedRose.new()
-      for _ <- 1..100, do: assert(:ok = GildedRose.update_quality(gilded_rose))
+    test "must increase quality by two when sell_in expired" do
+      aged_brie = %GildedRose.Item{name: "Aged Brie", quality: 0, sell_in: 0}
+      assert GildedRose.update_item(aged_brie).quality == 2
+    end
 
-      assert GildedRose.product(gilded_rose, "Aged Brie") == %GildedRose.Item{
-               name: "Aged Brie",
-               quality: 50,
-               sell_in: -98
-             }
+    test "quality never more than 50" do
+      aged_brie = %GildedRose.Item{name: "Aged Brie", quality: 50, sell_in: 0}
+      assert GildedRose.update_item(aged_brie).quality == 50
     end
   end
 
   describe "update_quality/1 for Sulfuras" do
     test "Sultufas sell_in always is always 0" do
-      gilded_rose = GildedRose.new()
-      for _ <- 1..100, do: assert(:ok = GildedRose.update_quality(gilded_rose))
-
-      assert GildedRose.product(gilded_rose, "Sulfuras, Hand of Ragnaros").sell_in == 0
+      sulfuras = %GildedRose.Item{name: "Sulfuras, Hand of Ragnaros", quality: 80, sell_in: 0}
+      for _ <- 1..100, do: assert(GildedRose.update_item(sulfuras).sell_in == 0)
     end
 
     test "Sultufas quality is always 80" do
-      gilded_rose = GildedRose.new()
-      for _ <- 1..100, do: assert(:ok = GildedRose.update_quality(gilded_rose))
-
-      assert GildedRose.product(gilded_rose, "Sulfuras, Hand of Ragnaros").quality == 80
+      sulfuras = %GildedRose.Item{name: "Sulfuras, Hand of Ragnaros", quality: 80, sell_in: 0}
+      for _ <- 1..100, do: assert(GildedRose.update_item(sulfuras).quality == 80)
     end
   end
 
-  describe "update_quality/1 for Backstage" do
+  describe "update_item/1 for Backstage" do
     test "Backstage passes to a TAFKAL80ETC concert when there is more than 10 days increase quality in 1" do
-      gilded_rose = GildedRose.new()
+      backstage = %GildedRose.Item{
+        name: "Backstage passes to a TAFKAL80ETC concert",
+        quality: 20,
+        sell_in: 11
+      }
 
-      sell_in =
-        GildedRose.product(gilded_rose, "Backstage passes to a TAFKAL80ETC concert").sell_in
-
-      for _ <- 1..(sell_in - 10) do
-        backstage = GildedRose.product(gilded_rose, "Backstage passes to a TAFKAL80ETC concert")
-        GildedRose.update_quality(gilded_rose)
-
-        updated_backstage =
-          GildedRose.product(gilded_rose, "Backstage passes to a TAFKAL80ETC concert")
-
-        assert updated_backstage.quality - backstage.quality == 1
-        assert backstage.sell_in - updated_backstage.sell_in == 1
-        assert updated_backstage.sell_in >= 10
-      end
+      assert GildedRose.update_item(backstage) == %GildedRose.Item{
+               name: "Backstage passes to a TAFKAL80ETC concert",
+               quality: 21,
+               sell_in: 10
+             }
     end
 
     test "Backstage passes to a TAFKAL80ETC concert when sell_in is beteween 10 and 6, increase quality in 2" do
-      gilded_rose = GildedRose.new()
+      backstage = %GildedRose.Item{
+        name: "Backstage passes to a TAFKAL80ETC concert",
+        quality: 20,
+        sell_in: 6
+      }
 
-      sell_in =
-        GildedRose.product(gilded_rose, "Backstage passes to a TAFKAL80ETC concert").sell_in
-
-      for _ <- 1..(sell_in - 10), do: GildedRose.update_quality(gilded_rose)
-
-      sell_in =
-        GildedRose.product(gilded_rose, "Backstage passes to a TAFKAL80ETC concert").sell_in
-
-      for _ <- 1..(sell_in - 5) do
-        backstage = GildedRose.product(gilded_rose, "Backstage passes to a TAFKAL80ETC concert")
-        GildedRose.update_quality(gilded_rose)
-
-        updated_backstage =
-          GildedRose.product(gilded_rose, "Backstage passes to a TAFKAL80ETC concert")
-
-        assert updated_backstage.quality - backstage.quality == 2
-        assert backstage.sell_in - updated_backstage.sell_in == 1
-        assert updated_backstage.sell_in >= 5
-      end
+      assert GildedRose.update_item(backstage) == %GildedRose.Item{
+               name: "Backstage passes to a TAFKAL80ETC concert",
+               quality: 22,
+               sell_in: 5
+             }
     end
 
     test "Backstage passes to a TAFKAL80ETC concert when there is less than 5 days increase quality in 3" do
-      gilded_rose = GildedRose.new()
+      backstage = %GildedRose.Item{
+        name: "Backstage passes to a TAFKAL80ETC concert",
+        quality: 20,
+        sell_in: 2
+      }
 
-      sell_in =
-        GildedRose.product(gilded_rose, "Backstage passes to a TAFKAL80ETC concert").sell_in
-
-      for _ <- 1..(sell_in - 5), do: GildedRose.update_quality(gilded_rose)
-
-      sell_in =
-        GildedRose.product(gilded_rose, "Backstage passes to a TAFKAL80ETC concert").sell_in
-
-      for _ <- 1..(sell_in - 5) do
-        backstage = GildedRose.product(gilded_rose, "Backstage passes to a TAFKAL80ETC concert")
-        GildedRose.update_quality(gilded_rose)
-
-        updated_backstage =
-          GildedRose.product(gilded_rose, "Backstage passes to a TAFKAL80ETC concert")
-
-        assert updated_backstage.quality - backstage.quality == 3
-        assert backstage.sell_in - updated_backstage.sell_in == 1
-        assert updated_backstage.sell_in < 5
-      end
+      assert GildedRose.update_item(backstage) == %GildedRose.Item{
+               name: "Backstage passes to a TAFKAL80ETC concert",
+               quality: 23,
+               sell_in: 1
+             }
     end
   end
 
