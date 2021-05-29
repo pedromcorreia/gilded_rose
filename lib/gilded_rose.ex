@@ -34,24 +34,14 @@ defmodule GildedRose do
     %{item | quality: 0} |> decrease_sell_in
   end
 
-  def update_item(
-        %GildedRose.Item{
-          name: @backstage,
-          sell_in: sell_in
-        } = item
-      )
-      when sell_in <= 5 and sell_in > 0 do
-    increase_quality(item, 3) |> decrease_sell_in
+  def update_item(%GildedRose.Item{name: @backstage, sell_in: sell_in} = item)
+      when sell_in <= 5 do
+    item |> increase_quality(3) |> decrease_sell_in
   end
 
-  def update_item(
-        %GildedRose.Item{
-          name: @backstage,
-          sell_in: sell_in
-        } = item
-      )
-      when sell_in <= 10 and sell_in > 5 do
-    increase_quality(item, 2) |> decrease_sell_in
+  def update_item(%GildedRose.Item{name: @backstage, sell_in: sell_in} = item)
+      when sell_in <= 10 do
+    item |> increase_quality(2) |> decrease_sell_in
   end
 
   def update_item(%GildedRose.Item{name: @backstage, sell_in: sell_in} = item)
