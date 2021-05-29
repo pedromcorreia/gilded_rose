@@ -22,17 +22,6 @@ defmodule GildedRose do
 
   def product(agent, arg), do: Enum.find(items(agent), &(&1.name == arg))
 
-  def update_quality(agent) do
-    for i <- 0..(Agent.get(agent, &length/1) - 1) do
-      item = Agent.get(agent, &Enum.at(&1, i))
-      item = update_item(item)
-
-      Agent.update(agent, &List.replace_at(&1, i, item))
-    end
-
-    :ok
-  end
-
   def update_item(
         %GildedRose.Item{
           name: "Backstage passes to a TAFKAL80ETC concert",
@@ -84,8 +73,13 @@ defmodule GildedRose do
     %{item | sell_in: sell_in - 1}
   end
 
-  def update_item(%GildedRose.Item{name: "Aged Brie"} = item) do
+  def update_item(%GildedRose.Item{name: "Aged Brie", quality: quality, sell_in: sell_in} = item)
+      when sell_in > 0 do
     increase_quality(item, 1)
+  end
+
+  def update_item(%GildedRose.Item{name: "Aged Brie", quality: quality} = item) do
+    increase_quality(item, 2)
   end
 
   def update_item(%GildedRose.Item{quality: quality, sell_in: sell_in} = item)
@@ -104,6 +98,17 @@ defmodule GildedRose do
 
   def increase_quality(%GildedRose.Item{quality: quality, sell_in: sell_in} = item, amount) do
     %{item | quality: quality + amount, sell_in: sell_in - 1}
+  end
+
+  def update_quality(agent) do
+    for i <- 0..(Agent.get(agent, &length/1) - 1) do
+      item = Agent.get(agent, &Enum.at(&1, i))
+      item = update_item(item)
+
+      Agent.update(agent, &List.replace_at(&1, i, item))
+    end
+
+    :ok
   end
 
   # keep while refactoring

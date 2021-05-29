@@ -74,6 +74,26 @@ defmodule GildedRoseTest do
                ]
     end
 
+    test "receive a process and respond with updated list items after 10 days" do
+      gilded_rose = GildedRose.new()
+
+      for _ <- 1..10, do: GildedRose.update_quality(gilded_rose)
+
+      assert GildedRose.items(gilded_rose) ==
+               [
+                 %GildedRose.Item{name: "+5 Dexterity Vest", quality: 10, sell_in: 0},
+                 %GildedRose.Item{name: "Aged Brie", quality: 18, sell_in: -8},
+                 %GildedRose.Item{name: "Elixir of the Mongoose", quality: 0, sell_in: -5},
+                 %GildedRose.Item{name: "Sulfuras, Hand of Ragnaros", quality: 80, sell_in: 0},
+                 %GildedRose.Item{
+                   name: "Backstage passes to a TAFKAL80ETC concert",
+                   quality: 35,
+                   sell_in: 5
+                 },
+                 %GildedRose.Item{name: "Conjured Mana Cake", quality: 0, sell_in: -7}
+               ]
+    end
+
     test "if the sell_in days is less than zero, degrades twice fast" do
       gilded_rose = GildedRose.new()
 
