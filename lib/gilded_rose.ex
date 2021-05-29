@@ -36,7 +36,7 @@ defmodule GildedRose do
          } = item
        )
        when sell_in <= 5 and sell_in > 0 do
-    increase_quality(item, 3)
+    increase_quality(item, 3) |> decrease_sell_in
   end
 
   defp update_item(
@@ -46,72 +46,66 @@ defmodule GildedRose do
          } = item
        )
        when sell_in <= 10 and sell_in > 5 do
-    increase_quality(item, 2)
+    increase_quality(item, 2) |> decrease_sell_in
   end
 
   defp update_item(%GildedRose.Item{name: @backstage, sell_in: sell_in} = item)
        when sell_in <= 0 do
-    %{item | sell_in: sell_in - 1, quality: 0}
+    %{item | quality: 0} |> decrease_sell_in
   end
 
   defp update_item(%GildedRose.Item{name: @backstage, sell_in: sell_in} = item)
        when sell_in > 0 do
-    increase_quality(item, 1)
+    item |> increase_quality(1) |> decrease_sell_in
   end
 
-  defp update_item(
-         %GildedRose.Item{
-           name: @backstage,
-           quality: 0,
-           sell_in: sell_in
-         } = item
-       ) do
-    %{item | sell_in: sell_in - 1}
+  defp update_item(%GildedRose.Item{name: @backstage, quality: 0} = item) do
+    item |> decrease_sell_in
   end
 
   defp update_item(%GildedRose.Item{name: @backstage} = item) do
-    increase_quality(item, -1)
+    item |> increase_quality(-1) |> decrease_sell_in
   end
 
   defp update_item(%GildedRose.Item{name: @sulfuras} = item) do
     %{item | quality: 80}
   end
 
-  defp update_item(%GildedRose.Item{quality: quality, sell_in: sell_in} = item)
+  defp update_item(%GildedRose.Item{quality: quality} = item)
        when quality >= 50 do
     item |> decrease_sell_in
   end
 
   defp update_item(%GildedRose.Item{name: @aged_brie, sell_in: sell_in} = item)
        when sell_in > 0 do
-    increase_quality(item, 1)
+    item |> increase_quality(1) |> decrease_sell_in
   end
 
   defp update_item(%GildedRose.Item{name: @aged_brie} = item) do
-    increase_quality(item, 2)
+    item |> increase_quality(2) |> decrease_sell_in
   end
 
-  defp update_item(%GildedRose.Item{quality: quality, sell_in: sell_in} = item)
+  defp update_item(%GildedRose.Item{quality: quality} = item)
        when quality < 1 do
-    %{item | sell_in: sell_in - 1}
+    item |> decrease_sell_in
   end
 
   defp update_item(%GildedRose.Item{sell_in: sell_in, name: name} = item)
        when sell_in <= 0 and name != @conjured do
-    increase_quality(item, -2)
+    item |> increase_quality(-2) |> decrease_sell_in
   end
 
   defp update_item(%GildedRose.Item{sell_in: sell_in, name: @conjured} = item)
        when sell_in == 0 do
-    increase_quality(item, -2)
+    item |> increase_quality(-2) |> decrease_sell_in
   end
 
   defp update_item(%GildedRose.Item{} = item) do
-    increase_quality(item, -1)
+    item |> increase_quality(-1) |> decrease_sell_in
   end
 
-  defp increase_quality(%GildedRose.Item{quality: quality, sell_in: sell_in} = item, amount) do
-    %{item | quality: quality + amount, sell_in: sell_in - 1}
+  defp increase_quality(%GildedRose.Item{quality: quality} = item, amount) do
+    %{item | quality: quality + amount}
   end
 
   defp decrease_sell_in(%GildedRose.Item{sell_in: sell_in} = item) do
