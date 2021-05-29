@@ -74,12 +74,12 @@ defmodule GildedRose do
   end
 
   defp update_item(%GildedRose.Item{name: @sulfuras} = item) do
-    item
+    %{item | quality: 80}
   end
 
   defp update_item(%GildedRose.Item{quality: quality, sell_in: sell_in} = item)
        when quality >= 50 do
-    %{item | sell_in: sell_in - 1}
+    item |> decrease_sell_in
   end
 
   defp update_item(%GildedRose.Item{name: @aged_brie, sell_in: sell_in} = item)
@@ -112,6 +112,10 @@ defmodule GildedRose do
 
   defp increase_quality(%GildedRose.Item{quality: quality, sell_in: sell_in} = item, amount) do
     %{item | quality: quality + amount, sell_in: sell_in - 1}
+  end
+
+  defp decrease_sell_in(%GildedRose.Item{sell_in: sell_in} = item) do
+    %{item | sell_in: sell_in - 1}
   end
 
   def update_quality(agent) do
