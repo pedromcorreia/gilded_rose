@@ -15,6 +15,16 @@ defmodule Helper do
     |> Poison.decode!()
     |> Enum.find(fn x -> x["day"] == day end)
     |> Map.get("product")
+    |> string_key_to_atom_map
+  end
+
+  defp string_key_to_atom_map(list_string_map) do
+    Enum.map(list_string_map, fn string_map ->
+      struct(
+        GildedRose.Item,
+        for({key, val} <- string_map, into: %{}, do: {String.to_atom(key), val})
+      )
+    end)
   end
 
   defp encode_gilded_rose_data(gilded_rose_leeroy) do

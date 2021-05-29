@@ -2,16 +2,23 @@ defmodule GildedRose do
   use Agent
   alias GildedRose.Item
 
+  @dexterity_vest "+5 Dexterity Vest"
+  @aged_brie "Aged Brie"
+  @elixir "Elixir of the Mongoose"
+  @sulfuras "Sulfuras, Hand of Ragnaros"
+  @backstage "Backstage passes to a TAFKAL80ETC concert"
+  @conjured "Conjured Mana Cake"
+
   def new() do
     {:ok, agent} =
       Agent.start_link(fn ->
         [
-          Item.new("+5 Dexterity Vest", 10, 20),
-          Item.new("Aged Brie", 2, 0),
-          Item.new("Elixir of the Mongoose", 5, 7),
-          Item.new("Sulfuras, Hand of Ragnaros", 0, 80),
-          Item.new("Backstage passes to a TAFKAL80ETC concert", 15, 20),
-          Item.new("Conjured Mana Cake", 3, 6)
+          Item.new(@dexterity_vest, 10, 20),
+          Item.new(@aged_brie, 2, 0),
+          Item.new(@elixir, 5, 7),
+          Item.new(@sulfuras, 0, 80),
+          Item.new(@backstage, 15, 20),
+          Item.new(@conjured, 3, 6)
         ]
       end)
 
@@ -22,94 +29,88 @@ defmodule GildedRose do
 
   def product(agent, arg), do: Enum.find(items(agent), &(&1.name == arg))
 
-  def update_item(
-        %GildedRose.Item{
-          name: "Backstage passes to a TAFKAL80ETC concert",
-          sell_in: sell_in
-        } = item
-      )
-      when sell_in <= 5 and sell_in > 0 do
+  defp update_item(
+         %GildedRose.Item{
+           name: @backstage,
+           sell_in: sell_in
+         } = item
+       )
+       when sell_in <= 5 and sell_in > 0 do
     increase_quality(item, 3)
   end
 
-  def update_item(
-        %GildedRose.Item{
-          name: "Backstage passes to a TAFKAL80ETC concert",
-          sell_in: sell_in
-        } = item
-      )
-      when sell_in <= 10 and sell_in > 5 do
+  defp update_item(
+         %GildedRose.Item{
+           name: @backstage,
+           sell_in: sell_in
+         } = item
+       )
+       when sell_in <= 10 and sell_in > 5 do
     increase_quality(item, 2)
   end
 
-  def update_item(
-        %GildedRose.Item{name: "Backstage passes to a TAFKAL80ETC concert", sell_in: sell_in} =
-          item
-      )
-      when sell_in <= 0 do
+  defp update_item(%GildedRose.Item{name: @backstage, sell_in: sell_in} = item)
+       when sell_in <= 0 do
     %{item | sell_in: sell_in - 1, quality: 0}
   end
 
-  def update_item(
-        %GildedRose.Item{name: "Backstage passes to a TAFKAL80ETC concert", sell_in: sell_in} =
-          item
-      )
-      when sell_in > 0 do
+  defp update_item(%GildedRose.Item{name: @backstage, sell_in: sell_in} = item)
+       when sell_in > 0 do
     increase_quality(item, 1)
   end
 
-  def update_item(
-        %GildedRose.Item{
-          name: "Backstage passes to a TAFKAL80ETC concert",
-          quality: 0,
-          sell_in: sell_in
-        } = item
-      ) do
+  defp update_item(
+         %GildedRose.Item{
+           name: @backstage,
+           quality: 0,
+           sell_in: sell_in
+         } = item
+       ) do
     %{item | sell_in: sell_in - 1}
   end
 
-  def update_item(%GildedRose.Item{name: "Backstage passes to a TAFKAL80ETC concert"} = item) do
+  defp update_item(%GildedRose.Item{name: @backstage} = item) do
     increase_quality(item, -1)
   end
 
-  def update_item(%GildedRose.Item{name: "Sulfuras, Hand of Ragnaros"} = item) do
+  defp update_item(%GildedRose.Item{name: @sulfuras} = item) do
     item
   end
 
-  def update_item(%GildedRose.Item{quality: quality, sell_in: sell_in} = item)
-      when quality >= 50 do
+  defp update_item(%GildedRose.Item{quality: quality, sell_in: sell_in} = item)
+       when quality >= 50 do
     %{item | sell_in: sell_in - 1}
   end
 
-  def update_item(%GildedRose.Item{name: "Aged Brie", quality: quality, sell_in: sell_in} = item)
-      when sell_in > 0 do
+  defp update_item(%GildedRose.Item{name: @aged_brie, sell_in: sell_in} = item)
+       when sell_in > 0 do
     increase_quality(item, 1)
   end
 
-  def update_item(%GildedRose.Item{name: "Aged Brie", quality: quality} = item) do
+  defp update_item(%GildedRose.Item{name: @aged_brie} = item) do
     increase_quality(item, 2)
   end
 
-  def update_item(%GildedRose.Item{quality: quality, sell_in: sell_in} = item)
-      when quality < 1 do
+  defp update_item(%GildedRose.Item{quality: quality, sell_in: sell_in} = item)
+       when quality < 1 do
     %{item | sell_in: sell_in - 1}
   end
 
-  def update_item(%GildedRose.Item{sell_in: sell_in, name: name} = item)
-      when sell_in <= 0 and name != "Conjured Mana Cake" do
+  defp update_item(%GildedRose.Item{sell_in: sell_in, name: name} = item)
+       when sell_in <= 0 and name != @conjured do
     increase_quality(item, -2)
   end
 
-  def update_item(%GildedRose.Item{sell_in: sell_in, name: name} = item)
-      when sell_in == 0 and name == "Conjured Mana Cake" do
+  defp update_item(%GildedRose.Item{sell_in: sell_in, name: @conjured} = item)
+       when sell_in == 0 do
     increase_quality(item, -2)
   end
 
-  def update_item(%GildedRose.Item{} = item) do
+  defp update_item(%GildedRose.Item{} = item) do
     increase_quality(item, -1)
   end
 
-  def increase_quality(%GildedRose.Item{quality: quality, sell_in: sell_in} = item, amount) do
+  defp increase_quality(%GildedRose.Item{quality: quality, sell_in: sell_in} = item, amount) do
     %{item | quality: quality + amount, sell_in: sell_in - 1}
   end
 

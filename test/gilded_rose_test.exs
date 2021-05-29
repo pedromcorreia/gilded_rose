@@ -15,8 +15,7 @@ defmodule GildedRoseTest do
 
       for day <- 1..1000 do
         GildedRose.update_quality(gilded_rose)
-        GildedRose.update_quality(gilded_rose_leeroy, :leeroy)
-        assert GildedRose.items(gilded_rose) == GildedRose.items(gilded_rose_leeroy)
+        assert GildedRose.items(gilded_rose) == Helper.find_item_by_day(day)
       end
     end
   end
@@ -30,41 +29,16 @@ defmodule GildedRoseTest do
   describe "items/1" do
     test "receive a process and respond with list items" do
       gilded_rose = GildedRose.new()
-
-      assert GildedRose.items(gilded_rose) ==
-               [
-                 %GildedRose.Item{name: "+5 Dexterity Vest", quality: 20, sell_in: 10},
-                 %GildedRose.Item{name: "Aged Brie", quality: 0, sell_in: 2},
-                 %GildedRose.Item{name: "Elixir of the Mongoose", quality: 7, sell_in: 5},
-                 %GildedRose.Item{name: "Sulfuras, Hand of Ragnaros", quality: 80, sell_in: 0},
-                 %GildedRose.Item{
-                   name: "Backstage passes to a TAFKAL80ETC concert",
-                   quality: 20,
-                   sell_in: 15
-                 },
-                 %GildedRose.Item{name: "Conjured Mana Cake", quality: 6, sell_in: 3}
-               ]
+      assert GildedRose.items(gilded_rose) == Helper.find_item_by_day(0)
     end
   end
 
-  describe "update_quality/1" do
+  describe "update_quality/1 to validate after some days" do
     test "receive a process and respond with updated list items" do
       gilded_rose = GildedRose.new()
       assert :ok = GildedRose.update_quality(gilded_rose)
 
-      assert GildedRose.items(gilded_rose) ==
-               [
-                 %GildedRose.Item{name: "+5 Dexterity Vest", quality: 19, sell_in: 9},
-                 %GildedRose.Item{name: "Aged Brie", quality: 1, sell_in: 1},
-                 %GildedRose.Item{name: "Elixir of the Mongoose", quality: 6, sell_in: 4},
-                 %GildedRose.Item{name: "Sulfuras, Hand of Ragnaros", quality: 80, sell_in: 0},
-                 %GildedRose.Item{
-                   name: "Backstage passes to a TAFKAL80ETC concert",
-                   quality: 21,
-                   sell_in: 14
-                 },
-                 %GildedRose.Item{name: "Conjured Mana Cake", quality: 5, sell_in: 2}
-               ]
+      assert GildedRose.items(gilded_rose) == Helper.find_item_by_day(1)
     end
 
     test "receive a process and respond with updated list items after 10 days" do
@@ -126,7 +100,9 @@ defmodule GildedRoseTest do
                  %GildedRose.Item{name: "Conjured Mana Cake", quality: 0, sell_in: -97}
                ]
     end
+  end
 
+  describe "update_quality/1 for generic items" do
     test "if the sell_in days is less than zero, degrades twice fast" do
       gilded_rose = GildedRose.new()
 
@@ -176,7 +152,9 @@ defmodule GildedRoseTest do
                sell_in: -98
              }
     end
+  end
 
+  describe "update_quality/1 for Sulfuras" do
     test "Sultufas sell_in always is always 0" do
       gilded_rose = GildedRose.new()
       for _ <- 1..100, do: assert(:ok = GildedRose.update_quality(gilded_rose))
@@ -190,7 +168,9 @@ defmodule GildedRoseTest do
 
       assert GildedRose.product(gilded_rose, "Sulfuras, Hand of Ragnaros").quality == 80
     end
+  end
 
+  describe "update_quality/1 for Backstage" do
     test "Backstage passes to a TAFKAL80ETC concert when there is more than 10 days increase quality in 1" do
       gilded_rose = GildedRose.new()
 
@@ -257,9 +237,11 @@ defmodule GildedRoseTest do
         assert updated_backstage.sell_in < 5
       end
     end
+  end
 
+  describe "update_quality/1 for Conjured" do
     @tag :skip
-    test "Conjured Mana Cake degrade twice fast than normal itens" do
+    test "Conjured Mana Cake degrade twice fast than normal items" do
       gilded_rose = GildedRose.new()
 
       conjured = GildedRose.product(gilded_rose, "Conjured Mana Cake")
