@@ -13,6 +13,12 @@ defmodule GildedRose do
   @backstage "Backstage passes to a TAFKAL80ETC concert"
   @conjured "Conjured Mana Cake"
 
+  @doc """
+  Init new agent with default items and values.
+
+  ## Examples
+      iex> GildedRose.new()
+  """
   @spec new() :: pid()
   def new() do
     {:ok, agent} =
@@ -35,7 +41,8 @@ defmodule GildedRose do
   Returns `:ok`.
 
   ## Examples
-      iex> update_quality(#PID<0.344.0>)
+      iex> agent = GildedRose.new()
+      iex> GildedRose.update_quality(agent)
       :ok
   """
   @spec update_quality(pid()) :: :ok
@@ -75,8 +82,8 @@ defmodule GildedRose do
   Returns `%Item{}`.
 
   ## Examples
-      iex> update_item(%Item{name: "Elixir of the Mongoose", quality: 1, sell_in: 1})
-        %Item{name: "Elixir of the Mongoose", quality: 0, sell_in: 0}
+      iex> GildedRose.update_item(%GildedRose.Item{name: "Elixir of the Mongoose", quality: 1, sell_in: 1})
+      %GildedRose.Item{name: "Elixir of the Mongoose", quality: 0, sell_in: 0}
   """
   @spec update_item(%Item{}) :: %Item{}
   def update_item(%Item{name: @backstage, sell_in: sell_in} = item) when sell_in <= 0 do

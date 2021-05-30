@@ -2,6 +2,9 @@ defmodule Support.Factory do
   @moduledoc """
   Module for mock data and help in tests.
   """
+
+  alias GildedRose.Item
+
   @dexterity_vest "+5 Dexterity Vest"
   @aged_brie "Aged Brie"
   @elixir "Elixir of the Mongoose"
@@ -44,6 +47,6 @@ defmodule Support.Factory do
 
   @spec init_schema(map()) :: %Item{}
   defp init_schema(%{name: name, quality: quality, sell_in: sell_in}) do
-    %GildedRose.Item{name: name, quality: quality, sell_in: sell_in}
+    %Item{name: name, quality: quality, sell_in: sell_in}
   end
 end
