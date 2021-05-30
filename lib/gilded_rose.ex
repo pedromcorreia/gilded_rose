@@ -25,15 +25,31 @@ defmodule GildedRose do
     agent
   end
 
-  def update_quality(agent) do
-    for i <- 0..(Agent.get(agent, &length/1) - 1) do
-      item = Agent.get(agent, &Enum.at(&1, i))
-      item = update_item(item)
+  def update_quality(agent) when is_pid(agent) do
+    Enum.each(0..agent_length(agent), fn index ->
+      with item = %Item{} <- get_and_update(agent, index),
+           :ok <- update(agent, index, item) do
+        :ok
+      end
+    end)
+  end
 
-      Agent.update(agent, &List.replace_at(&1, i, item))
-    end
+  defp get(agent, index) when is_pid(agent) do
+    Agent.get(agent, &Enum.at(&1, index))
+  end
 
-    :ok
+  defp agent_length(agent) do
+    Agent.get(agent, &length/1) - 1
+  end
+
+  defp update(agent, index, item) when is_pid(agent) do
+    Agent.update(agent, &List.replace_at(&1, index, item))
+  end
+
+  defp get_and_update(agent, index) when is_pid(agent) do
+    agent
+    |> get(index)
+    |> update_item()
   end
 
   def update_item(%Item{name: @backstage, sell_in: sell_in} = item) when sell_in <= 0 do
@@ -52,9 +68,7 @@ defmodule GildedRose do
     item |> increase_quality(1) |> decrease_sell_in
   end
 
-  def update_item(%Item{name: @sulfuras} = item) do
-    %{item | quality: 80}
-  end
+  def update_item(%Item{name: @sulfuras} = item), do: %{item | quality: 80}
 
   def update_item(%Item{name: @aged_brie, sell_in: sell_in} = item) when sell_in > 0 do
     item |> increase_quality(1) |> decrease_sell_in
