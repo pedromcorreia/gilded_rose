@@ -12,6 +12,8 @@ defmodule GildedRose do
   @sulfuras "Sulfuras, Hand of Ragnaros"
   @backstage "Backstage passes to a TAFKAL80ETC concert"
   @conjured "Conjured Mana Cake"
+  @legendary_items [@sulfuras]
+  @legendary_values %{quality: 80, sell_in: 0}
 
   @doc """
   Init new agent with default items and values.
@@ -102,7 +104,8 @@ defmodule GildedRose do
     item |> increase_quality(1) |> decrease_sell_in
   end
 
-  def update_item(%Item{name: @sulfuras} = item), do: %{item | quality: 80}
+  def update_item(%Item{name: name} = item) when name in @legendary_items,
+    do: %{item | quality: @legendary_values.quality}
 
   def update_item(%Item{name: @aged_brie, sell_in: sell_in} = item) when sell_in > 0 do
     item |> increase_quality(1) |> decrease_sell_in

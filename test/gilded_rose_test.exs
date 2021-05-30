@@ -39,12 +39,12 @@ defmodule GildedRoseTest do
   end
 
   describe "update_quality/1 for Aged Brie" do
-    test "must increase quality when gets old" do
+    test "increase quality when gets old" do
       aged_brie = item(:aged_brie, %{sell_in: 2})
       assert GildedRose.update_item(aged_brie).quality == 1
     end
 
-    test "must increase quality by two when sell_in expired" do
+    test "increase quality by two when sell_in expired" do
       aged_brie = item(:aged_brie)
       assert GildedRose.update_item(aged_brie).quality == 2
     end
@@ -55,35 +55,35 @@ defmodule GildedRoseTest do
     end
   end
 
-  describe "update_quality/1 for Sulfuras" do
-    test "Sultufas sell_in always is always 0" do
+  describe "update_quality/1 for Legendary items" do
+    test "when Sultufas sell_in is always 0" do
       sulfuras = item(:sulfuras)
       for _ <- 1..100, do: assert(GildedRose.update_item(sulfuras).sell_in == 0)
     end
 
-    test "Sultufas quality is always 80" do
+    test "when Sultufas quality is always 80" do
       sulfuras = item(:sulfuras)
       for _ <- 1..100, do: assert(GildedRose.update_item(sulfuras).quality == 80)
     end
   end
 
   describe "update_item/1 for Backstage" do
-    test "quality after concern dropt to 0" do
+    test "quality after concern drops to 0" do
       backstage = item(:backstage, %{quality: 100, sell_in: -2})
       assert GildedRose.update_item(backstage).quality == 0
     end
 
-    test "Backstage passes to a TAFKAL80ETC concert when there is more than 10 days increase quality in 1" do
+    test "when there is more than 10 days increase quality in 1" do
       backstage = item(:backstage)
       assert GildedRose.update_item(backstage).quality == 21
     end
 
-    test "Backstage passes to a TAFKAL80ETC concert when sell_in is beteween 10 and 6, increase quality in 2" do
+    test "when sell_in is beteween 10 and 6, increase quality in 2" do
       backstage = item(:backstage, %{sell_in: 6})
       assert GildedRose.update_item(backstage).quality == 22
     end
 
-    test "Backstage passes to a TAFKAL80ETC concert when there is less than 5 days increase quality in 3" do
+    test "when there is less than 5 days increase quality in 3" do
       backstage = item(:backstage, %{sell_in: 2})
       assert GildedRose.update_item(backstage).quality == 23
     end
