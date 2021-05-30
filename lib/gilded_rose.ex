@@ -82,12 +82,16 @@ defmodule GildedRose do
     item |> decrease_sell_in
   end
 
-  def update_item(%Item{sell_in: sell_in, name: name} = item)
-      when sell_in <= 0 and name != @conjured do
+  def update_item(%Item{sell_in: sell_in, name: @conjured} = item) when sell_in >= 0 do
     item |> increase_quality(-2) |> decrease_sell_in
   end
 
-  def update_item(%Item{sell_in: sell_in, name: @conjured} = item) when sell_in == 0 do
+  def update_item(%Item{sell_in: sell_in, name: @conjured} = item) when sell_in < 0 do
+    item |> increase_quality(-4) |> decrease_sell_in
+  end
+
+  def update_item(%Item{sell_in: sell_in, name: name} = item)
+      when sell_in <= 0 and name != @conjured do
     item |> increase_quality(-2) |> decrease_sell_in
   end
 

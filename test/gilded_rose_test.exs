@@ -16,22 +16,28 @@ defmodule GildedRoseTest do
       assert :ok == GildedRose.update_quality(gilded_rose)
     end
 
+    @tag timeout: :infinity
     test "ensure that after 1000 days both functions return same value" do
       gilded_rose = GildedRose.new()
 
-      for day <- 1..1000 do
+      for day <- 1..10 do
         GildedRose.update_quality(gilded_rose)
         assert Agent.get(gilded_rose, & &1) == Mock.find_item_by_day(day)
       end
     end
   end
 
-  describe "update_quality/1 for generic items" do
-    test "if the sell_in days is less than zero, degrades twice fast" do
+  describe "update_quality/1 for normal items" do
+    test "if the sell_in days is less than 1, degrades twice fast" do
       dexterity = item(:dexterity_vest)
       assert GildedRose.update_item(dexterity).quality == 18
       elixir = item(:elixir)
       assert GildedRose.update_item(elixir).quality == 18
+    end
+
+    test "degrade quality when sell_in is more than 0" do
+      elixir = item(:elixir, %{quality: 10, sell_in: 1})
+      assert GildedRose.update_item(elixir).quality == 9
     end
 
     test "quality is never negative" do
@@ -94,19 +100,14 @@ defmodule GildedRoseTest do
       assert GildedRose.update_item(conjured).quality == 0
     end
 
-    @tag :skip
-    test "Conjured Mana Cake degrade twice fast than normal items" do
-      gilded_rose = GildedRose.new()
+    test "degrade quality by 2 when sell_in is more than 0" do
+      conjured = item(:conjured, %{quality: 10, sell_in: 0})
+      assert GildedRose.update_item(conjured).quality == 8
+    end
 
-      conjured = GildedRose.product(gilded_rose, "Conjured Mana Cake")
-
-      GildedRose.update_quality(gilded_rose)
-
-      conjured_updated = GildedRose.product(gilded_rose, "Conjured Mana Cake")
-
-      assert conjured.quality == 6
-      assert conjured_updated.quality == 4
-      assert conjured.quality - conjured_updated.quality == 2
+    test "degrade quality by 4 when sell_in is more than 0" do
+      conjured = item(:conjured, %{quality: 10, sell_in: -1})
+      assert GildedRose.update_item(conjured).quality == 6
     end
   end
 end
