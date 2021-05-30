@@ -24,3 +24,5 @@ gilded_rose-*.tar
 
 *.swp
 *.swo
+
+*.DS_Store
