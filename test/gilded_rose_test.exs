@@ -1,6 +1,7 @@
 defmodule GildedRoseTest do
   use ExUnit.Case
   doctest GildedRose
+  import Support.Factory
 
   describe "new/0" do
     test "init a process id" do
@@ -27,41 +28,41 @@ defmodule GildedRoseTest do
 
   describe "update_quality/1 for generic items" do
     test "if the sell_in days is less than zero, degrades twice fast" do
-      dexterity = %GildedRose.Item{name: "+5 Dexterity Vest", quality: 20, sell_in: -10}
+      dexterity = item(:dexterity_vest)
       assert GildedRose.update_item(dexterity).quality == 18
     end
 
     test "quality is never negative" do
-      dexterity = %GildedRose.Item{name: "+5 Dexterity Vest", quality: 0, sell_in: -10}
+      dexterity = item(:dexterity_vest, %{quality: 0})
       assert GildedRose.update_item(dexterity).quality == 0
     end
   end
 
   describe "update_quality/1 for Aged Brie" do
     test "must increase quality when gets old" do
-      aged_brie = %GildedRose.Item{name: "Aged Brie", quality: 0, sell_in: 2}
+      aged_brie = item(:aged_brie, %{sell_in: 2})
       assert GildedRose.update_item(aged_brie).quality == 1
     end
 
     test "must increase quality by two when sell_in expired" do
-      aged_brie = %GildedRose.Item{name: "Aged Brie", quality: 0, sell_in: 0}
+      aged_brie = item(:aged_brie)
       assert GildedRose.update_item(aged_brie).quality == 2
     end
 
     test "quality never more than 50" do
-      aged_brie = %GildedRose.Item{name: "Aged Brie", quality: 50, sell_in: 0}
+      aged_brie = item(:aged_brie, %{quality: 50})
       assert GildedRose.update_item(aged_brie).quality == 50
     end
   end
 
   describe "update_quality/1 for Sulfuras" do
     test "Sultufas sell_in always is always 0" do
-      sulfuras = %GildedRose.Item{name: "Sulfuras, Hand of Ragnaros", quality: 80, sell_in: 0}
+      sulfuras = item(:sulfuras)
       for _ <- 1..100, do: assert(GildedRose.update_item(sulfuras).sell_in == 0)
     end
 
     test "Sultufas quality is always 80" do
-      sulfuras = %GildedRose.Item{name: "Sulfuras, Hand of Ragnaros", quality: 80, sell_in: 0}
+      sulfuras = item(:sulfuras)
       for _ <- 1..100, do: assert(GildedRose.update_item(sulfuras).quality == 80)
     end
   end
