@@ -20,7 +20,7 @@ defmodule GildedRoseTest do
 
       for day <- 1..1000 do
         GildedRose.update_quality(gilded_rose)
-        assert Agent.get(gilded_rose, & &1) == find_item_by_day(day)
+        assert Agent.get(gilded_rose, & &1) == Mock.find_item_by_day(day)
       end
     end
   end
@@ -119,22 +119,5 @@ defmodule GildedRoseTest do
       assert conjured_updated.quality == 4
       assert conjured.quality - conjured_updated.quality == 2
     end
-  end
-
-  defp find_item_by_day(day) when day <= 1000 and day >= 0 do
-    File.read!("test/mock/gilded_rose_data.json")
-    |> Poison.decode!()
-    |> Enum.find(fn x -> x["day"] == day end)
-    |> Map.get("product")
-    |> string_key_to_atom_map
-  end
-
-  defp string_key_to_atom_map(list_string_map) do
-    Enum.map(list_string_map, fn string_map ->
-      struct(
-        GildedRose.Item,
-        for({key, val} <- string_map, into: %{}, do: {String.to_atom(key), val})
-      )
-    end)
   end
 end
