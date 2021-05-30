@@ -1,4 +1,8 @@
 defmodule GildedRose do
+  @moduledoc """
+  GildedRose module, responsible for storing item data and their status.
+  """
+
   use Agent
   alias GildedRose.Item
 
@@ -26,6 +30,14 @@ defmodule GildedRose do
     agent
   end
 
+  @doc """
+  Update all items in process id with their respective rules.
+  Returns `:ok`.
+
+  ## Examples
+      iex> update_quality(#PID<0.344.0>)
+      :ok
+  """
   @spec update_quality(pid()) :: :ok
   def update_quality(agent) when is_pid(agent) do
     Enum.each(0..agent_length(agent), fn index ->
@@ -58,6 +70,14 @@ defmodule GildedRose do
     |> update_item()
   end
 
+  @doc """
+  Update Item struct with specific rule.
+  Returns `%Item{}`.
+
+  ## Examples
+      iex> update_item(%Item{name: "Elixir of the Mongoose", quality: 1, sell_in: 1})
+        %Item{name: "Elixir of the Mongoose", quality: 0, sell_in: 0}
+  """
   @spec update_item(%Item{}) :: %Item{}
   def update_item(%Item{name: @backstage, sell_in: sell_in} = item) when sell_in <= 0 do
     %{item | quality: 0} |> decrease_sell_in
