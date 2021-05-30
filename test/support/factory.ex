@@ -20,12 +20,24 @@ defmodule Support.Factory do
     %{name: @dexterity_vest, quality: 20, sell_in: -10}
   end
 
+  def default_values(:elixir) do
+    %{name: @elixir, quality: 20, sell_in: -10}
+  end
+
   def default_values(:sulfuras) do
     %{name: @sulfuras, quality: 80, sell_in: 0}
   end
 
   def default_values(:aged_brie) do
     %{name: @aged_brie, quality: 0, sell_in: 0}
+  end
+
+  def default_values(:backstage) do
+    %{name: @backstage, quality: 20, sell_in: 11}
+  end
+
+  def default_values(:conjured) do
+    %{name: @conjured, quality: 0, sell_in: -3}
   end
 
   defp init_schema(%{name: name, quality: quality, sell_in: sell_in}) do

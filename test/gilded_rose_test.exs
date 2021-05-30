@@ -30,11 +30,15 @@ defmodule GildedRoseTest do
     test "if the sell_in days is less than zero, degrades twice fast" do
       dexterity = item(:dexterity_vest)
       assert GildedRose.update_item(dexterity).quality == 18
+      elixir = item(:elixir)
+      assert GildedRose.update_item(elixir).quality == 18
     end
 
     test "quality is never negative" do
       dexterity = item(:dexterity_vest, %{quality: 0})
       assert GildedRose.update_item(dexterity).quality == 0
+      elixir = item(:elixir, %{quality: 0})
+      assert GildedRose.update_item(elixir).quality == 0
     end
   end
 
@@ -69,40 +73,24 @@ defmodule GildedRoseTest do
 
   describe "update_item/1 for Backstage" do
     test "Backstage passes to a TAFKAL80ETC concert when there is more than 10 days increase quality in 1" do
-      backstage = %GildedRose.Item{
-        name: "Backstage passes to a TAFKAL80ETC concert",
-        quality: 20,
-        sell_in: 11
-      }
-
+      backstage = item(:backstage)
       assert GildedRose.update_item(backstage).quality == 21
     end
 
     test "Backstage passes to a TAFKAL80ETC concert when sell_in is beteween 10 and 6, increase quality in 2" do
-      backstage = %GildedRose.Item{
-        name: "Backstage passes to a TAFKAL80ETC concert",
-        quality: 20,
-        sell_in: 6
-      }
-
+      backstage = item(:backstage, %{sell_in: 6})
       assert GildedRose.update_item(backstage).quality == 22
     end
 
     test "Backstage passes to a TAFKAL80ETC concert when there is less than 5 days increase quality in 3" do
-      backstage = %GildedRose.Item{
-        name: "Backstage passes to a TAFKAL80ETC concert",
-        quality: 20,
-        sell_in: 2
-      }
-
+      backstage = item(:backstage, %{sell_in: 2})
       assert GildedRose.update_item(backstage).quality == 23
     end
   end
 
   describe "update_quality/1 for Conjured" do
     test "never degrade less than 0" do
-      conjured = %GildedRose.Item{name: "Conjured Mana Cake", quality: 0, sell_in: -3}
-
+      conjured = item(:conjured)
       assert GildedRose.update_item(conjured).quality == 0
     end
 
