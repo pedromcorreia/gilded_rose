@@ -9,6 +9,7 @@ defmodule GildedRose do
   @backstage "Backstage passes to a TAFKAL80ETC concert"
   @conjured "Conjured Mana Cake"
 
+  @spec new() :: pid()
   def new() do
     {:ok, agent} =
       Agent.start_link(fn ->
@@ -25,6 +26,7 @@ defmodule GildedRose do
     agent
   end
 
+  @spec update_quality(pid()) :: :ok
   def update_quality(agent) when is_pid(agent) do
     Enum.each(0..agent_length(agent), fn index ->
       with item = %Item{} <- get_and_update(agent, index),
@@ -34,24 +36,29 @@ defmodule GildedRose do
     end)
   end
 
+  @spec get(pid(), number()) :: %Item{}
   defp get(agent, index) when is_pid(agent) do
     Agent.get(agent, &Enum.at(&1, index))
   end
 
+  @spec agent_length(pid()) :: number()
   defp agent_length(agent) do
     Agent.get(agent, &length/1) - 1
   end
 
+  @spec update(pid(), number(), %Item{}) :: :ok
   defp update(agent, index, item) when is_pid(agent) do
     Agent.update(agent, &List.replace_at(&1, index, item))
   end
 
+  @spec get_and_update(pid(), number()) :: %Item{}
   defp get_and_update(agent, index) when is_pid(agent) do
     agent
     |> get(index)
     |> update_item()
   end
 
+  @spec update_item(%Item{}) :: %Item{}
   def update_item(%Item{name: @backstage, sell_in: sell_in} = item) when sell_in <= 0 do
     %{item | quality: 0} |> decrease_sell_in
   end
@@ -99,11 +106,13 @@ defmodule GildedRose do
     item |> increase_quality(-1) |> decrease_sell_in
   end
 
+  @spec increase_quality(%Item{}, number()) :: %Item{}
   defp increase_quality(%Item{quality: quality} = item, amount) do
     quality = min(quality + amount, 50)
     %{item | quality: quality}
   end
 
+  @spec decrease_sell_in(%Item{}) :: %Item{}
   defp decrease_sell_in(%Item{sell_in: sell_in} = item) do
     %{item | sell_in: sell_in - 1}
   end

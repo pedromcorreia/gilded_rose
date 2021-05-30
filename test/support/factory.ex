@@ -9,13 +9,15 @@ defmodule Support.Factory do
   @backstage "Backstage passes to a TAFKAL80ETC concert"
   @conjured "Conjured Mana Cake"
 
-  def item(name, opts \\ %{}) do
+  @spec item(atom(), map()) :: %Item{}
+  def item(name, opts \\ %{}) when is_atom(name) do
     name
     |> default_values()
     |> Map.merge(opts)
     |> init_schema()
   end
 
+  @spec default_values(atom()) :: map()
   def default_values(:dexterity_vest) do
     %{name: @dexterity_vest, quality: 20, sell_in: -10}
   end
@@ -40,6 +42,7 @@ defmodule Support.Factory do
     %{name: @conjured, quality: 0, sell_in: -3}
   end
 
+  @spec init_schema(map()) :: %Item{}
   defp init_schema(%{name: name, quality: quality, sell_in: sell_in}) do
     %GildedRose.Item{name: name, quality: quality, sell_in: sell_in}
   end
