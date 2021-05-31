@@ -88,3 +88,12 @@ And you can package up a bundle of your completed work with:
 ```
 git bundle create your_name.bundle master
 ```
+## Resolution notes
+
+After reading the code, I made some notes and come here to share.
+I wasn't sure if it was possible to add new files in the gilded_rose folder,
+knowing that, if possible, I would leave some more explicit functions in
+different files, like helpers.
+I created a medium with some tips on how to solve the kata,
+https://pedmcor.medium.com/resolving-gilded-rose-with-elixir-b967cce1c69,
+without adding the resolution, if there is a need or doubt send an issue
