@@ -17,6 +17,26 @@ defmodule GildedRoseTest do
     end
   end
 
+  describe "items/1" do
+    test "returns Items list" do
+      gilded_rose = GildedRose.new()
+      assert :ok == GildedRose.update_quality(gilded_rose)
+
+      assert GildedRose.items(gilded_rose) == [
+               %GildedRose.Item{name: "+5 Dexterity Vest", quality: 19, sell_in: 9},
+               %GildedRose.Item{name: "Aged Brie", quality: 1, sell_in: 1},
+               %GildedRose.Item{name: "Elixir of the Mongoose", quality: 6, sell_in: 4},
+               %GildedRose.Item{name: "Sulfuras, Hand of Ragnaros", quality: 80, sell_in: 0},
+               %GildedRose.Item{
+                 name: "Backstage passes to a TAFKAL80ETC concert",
+                 quality: 21,
+                 sell_in: 14
+               },
+               %GildedRose.Item{name: "Conjured Mana Cake", quality: 4, sell_in: 2}
+             ]
+    end
+  end
+
   describe "update_quality/1 for normal items" do
     test "if the sell_in days is less than 1, degrades twice fast" do
       dexterity = item(:dexterity_vest)

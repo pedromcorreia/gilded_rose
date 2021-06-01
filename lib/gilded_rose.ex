@@ -39,6 +39,25 @@ defmodule GildedRose do
   end
 
   @doc """
+  Return items list.
+  Returns `[%GildedRose.Item{}]`.
+
+  ## Examples
+      iex> agent = GildedRose.new()
+      iex> GildedRose.items(agent)
+      [
+        %GildedRose.Item{name: "+5 Dexterity Vest", quality: 20, sell_in: 10},
+        %GildedRose.Item{name: "Aged Brie", quality: 0, sell_in: 2},
+        %GildedRose.Item{name: "Elixir of the Mongoose", quality: 7, sell_in: 5},
+        %GildedRose.Item{name: "Sulfuras, Hand of Ragnaros", quality: 80, sell_in: 0},
+        %GildedRose.Item{name: "Backstage passes to a TAFKAL80ETC concert", quality: 20, sell_in: 15},
+        %GildedRose.Item{name: "Conjured Mana Cake", quality: 6, sell_in: 3}
+      ]
+  """
+  @spec items(pid()) :: list(%Item{})
+  def items(agent), do: Agent.get(agent, & &1)
+
+  @doc """
   Update all items in process id with their respective rules.
   Returns `:ok`.
 
@@ -47,36 +66,31 @@ defmodule GildedRose do
       iex> GildedRose.update_quality(agent)
       :ok
   """
-  @spec update_quality(pid()) :: :ok
+  @spec update_quality(pid()) :: :ok | :error
   def update_quality(agent) when is_pid(agent) do
-    Enum.each(0..agent_length(agent), fn index ->
-      with item = %Item{} <- get_and_update(agent, index),
-           :ok <- update(agent, index, item) do
+    case is_list(update_quality_items(agent)) do
+      true ->
         :ok
-      end
-    end)
+    end
   end
 
-  @spec get(pid(), number()) :: %Item{}
-  defp get(agent, index) when is_pid(agent) do
-    Agent.get(agent, &Enum.at(&1, index))
-  end
+  @spec update_quality_items(pid()) :: list(%Item{})
+  defp update_quality_items(agent) do
+    {items, _} =
+      items(agent)
+      |> Enum.map_reduce(0, fn item, index ->
+        with item = %Item{} <- update_item(item),
+             :ok <- update(agent, index, item) do
+          {item, index + 1}
+        end
+      end)
 
-  @spec agent_length(pid()) :: number()
-  defp agent_length(agent) do
-    Agent.get(agent, &length/1) - 1
+    items
   end
 
   @spec update(pid(), number(), %Item{}) :: :ok
   defp update(agent, index, item) when is_pid(agent) do
     Agent.update(agent, &List.replace_at(&1, index, item))
-  end
-
-  @spec get_and_update(pid(), number()) :: %Item{}
-  defp get_and_update(agent, index) when is_pid(agent) do
-    agent
-    |> get(index)
-    |> update_item()
   end
 
   @doc """
